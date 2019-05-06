@@ -181,7 +181,7 @@ myConfiglets = server.getConfiglets()
 
 for configlet in myConfiglets:
 	myConfig = configlet.config
-    newConfig = ""
+	newConfig = ""
 
 	configLines = config.splitLines()
 
