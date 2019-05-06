@@ -39,7 +39,7 @@ import cvp, optparse, string, re
 
 def checkCli(myLine):
 	replacedLine = re.sub('aaa authorization console','aaa authorization serial-console', myLine)
-	replacedLine = re.sub('.*peer-group.*', 'peer group', myLine)
+	replacedLine = re.sub('peer-group', 'peer group', myLine)
 	return replacedLine
 
 #area nssa translate type7 always - area not-so-stubby lsa type-7 convert type-5
