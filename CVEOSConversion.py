@@ -183,7 +183,7 @@ for configlet in myConfiglets:
 	myConfig = configlet.config
 	newConfig = ""
 
-	configLines = config.splitLines()
+	configLines = myConfig.splitLines()
 
 	for line in configLines:
 		newConfig =  newConfig + checkCli(line) + "\n"
