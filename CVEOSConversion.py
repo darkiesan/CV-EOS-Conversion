@@ -249,4 +249,5 @@ for configlet in myConfiglets:
 		print "\n\n=================================================================="
 		print "Configlet: %s" % ( configlet.name )
 		print "=================================================================="
+		print "%s" % ( newConfig )
 
