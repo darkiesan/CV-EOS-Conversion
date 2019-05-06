@@ -220,6 +220,7 @@ host = opts.cvphostname
 user = opts.cvpusername
 password = opts.cvppassword
 debug = opts.debug
+trace = opts.trace
 
 #
 # Connect and authenticate with CVP server
