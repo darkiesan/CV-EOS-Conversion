@@ -245,9 +245,9 @@ for configlet in myConfiglets:
 # If debug is yes, print all proposed configuration to terminal
 #
 
-	if debug == "yes":
-		print "\n\n=================================================================="
-		print "Configlet: %s" % ( configlet.name )
-		print "=================================================================="
-		print "%s" % ( newConfig )
+		if debug == "yes":
+			print "\n\n=================================================================="
+			print "Configlet: %s" % ( configlet.name )
+			print "=================================================================="
+			print "%s" % ( newConfig )
 
