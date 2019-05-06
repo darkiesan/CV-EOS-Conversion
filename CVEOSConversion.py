@@ -246,5 +246,7 @@ for configlet in myConfiglets:
 #
 
 	if debug == "yes":
+		print "\n\n=================================================================="
 		print "Configlet %s, Configuration:\n%s" % ( configlet.name , newConfig )
+		print "=================================================================="
 
