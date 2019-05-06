@@ -242,7 +242,7 @@ myConfiglets = server.getConfiglets()
 for configlet in myConfiglets:
 	if configlet.configletType == 'Static':
 		if trace == "yes":
-			print "Working on configlet: %s" % ( configlet.name )
+			print "\nWorking on configlet: %s" % ( configlet.name )
 
 		newConfig = checkCli(configlet.config)
 
