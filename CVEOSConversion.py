@@ -208,6 +208,7 @@ op.add_option( '-c', '--cvphostname', dest='cvphostname', action='store', help='
 op.add_option( '-u', '--cvpusername', dest='cvpusername', action='store', help='CVP username', type='string')
 op.add_option( '-p', '--cvppassword', dest='cvppassword', action='store', help='CVP password', type='string')
 op.add_option( '-d', '--debug', dest='debug', action='store', help='If debug is yes, nothing will actually be sent to CVP and proposed configs are written to terminal', type='string', default='no')
+op.add_option( '-t', '--trace', dest='trace', action='store', help='If trace is yes, alongside actual changes to CVP configlets, there will be trace messages to terminal', type='string', default='no')
 
 opts, _ = op.parse_args()
 
@@ -239,6 +240,9 @@ myConfiglets = server.getConfiglets()
 
 for configlet in myConfiglets:
 	if configlet.configletType == 'Static':
+		if trace == "yes":
+			print "Working on configlet: %s" % ( configlet.name )
+
 		newConfig = checkCli(configlet.config)
 
 #
@@ -251,3 +255,13 @@ for configlet in myConfiglets:
 			print "=================================================================="
 			print "%s" % ( newConfig )
 
+#
+# If debug is no, update all configlets with CLI changes
+#
+
+		if debug == "no":
+			if trace == "yes":
+				print "Updating configlet: %s" % ( configlet.name)
+
+			configlet.config = newConfig
+			server.updateConfiglet( configlet )
