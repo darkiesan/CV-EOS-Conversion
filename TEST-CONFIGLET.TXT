@@ -1,0 +1,187 @@
+!
+! AAA
+!
+aaa authorization console
+!
+! Router OSPF
+!
+router ospf 1
+  area nssa translate type7 always
+  bfd all-interfaces
+  ip ospf name-lookup
+  timers lsa arrival 10
+  timers throttle lsa all 10 10 10
+  timers throttle spf 10 10 10 
+!
+! Router OSPFv3
+!
+router ospfv3
+  bfd all-interfaces
+  timers lsa arrival 10
+  timers throttle lsa all 10 10 10
+  timers throttle spf 10 10 10 
+!
+! interface
+!
+interface Ethernet1
+  vrf forwarding GREEN
+  arp timeout 900
+  dot1x max-reauth-req 10
+  errdisable detect cause link-flap
+  ip dhcp smart-relay
+  ip igmp query-max-response-time 30
+  ip ospf bfd
+  ip ospf shutdown
+  ip pim bsr-border
+  ip pim neighbor-filter myFilter
+  ip pim query-interval 30
+  ip rip v2-broadcast
+  ipv6 nd ra suppress
+  ipv6 ospf retransmit-interval 30
+  isis lsp-interval 30
+  lacp rate 10
+  link state group TEST upstream
+  link state group TEST downstream
+  priority-flow-control mode on
+  snmp trap link-status
+  switchport backup interface ethernet 2 prefer vlan 100
+  switchport port-security maximum 1 
+  switchport vlan mapping 100 1000
+  vrrp 1 authentication test
+  vrrp 1 delay reload 10
+  vrrp 1 description test
+  vrrp 1 ip version 3
+  vrrp 1 ip 1.1.1.1
+  vrrp 1 ip 1.1.1.1. secondary
+  vrrp 1 priority 254
+  vrrp 1 shutdown
+  vrrp 1 timers advertise 10
+  vrrp 1 track test decrement 1
+!
+! Router BGP
+!
+router bgp 65000
+  bgp listen limit 10
+  neighbor TEST peer-group
+  neighbor TEST fall-over bfd
+  neighbor TEST soft-reconfiguration
+  neighbor TEST transport connection-mode
+!
+! Class map
+!
+class-map type control-plane
+!
+! Control plane
+!
+control-plane
+!
+! Router rip
+!
+router rip
+  default-metric
+  timers basic
+!
+!
+! Global
+!
+enable secret sha512 $6$.R37ezI9fyQ.6BZO$0pFxRkRQD8Jwootmzk9k8zFbpmC6wTr7MGgw6kk07Gje/G5WAqhYFXlgUE9pJqLrgMh75h1Q5YqE963R0MAMp1
+!
+errdisable detect cause link-flap
+!
+ip community-list expanded TEST permit
+ip dhcp smart-relay global
+ip domain-name webkom.se
+ip extcommunity-list expanded TEST permit
+ip extcommunity-list standard TEST permit
+ip http client source-interface Management1
+ip igmp query-max-response-time 10
+ip igmp snooping vlan immediate-leave
+ip igmp snooping vlan mrouter
+ip igmp snooping vlan static
+!
+! Router IGMP
+!
+router igmp
+  ip igmp query-max-response-time 10
+!
+! Router MSDP
+!
+router msdp
+  ip msdp cache-sa-state
+  ip msdp default-peer 1.1.1.1
+  ip msdp description TEST
+  ip msdp group-limit 10
+  ip msdp keepalive 30
+  ip msdp mesh-group TEST
+  ip msdp originator-id Loopback0
+  ip msdp peer 1.1.1.1
+  ip msdp sa-filter in MyFilter
+  ip msdp sa-filter out MyFilter
+  ip msdp sa-limit 10
+  ip msdp shutdown
+  ip msdp timer 10
+!
+! Router PIM
+!
+router pim
+  ip pim anycast-rp
+  ip pim bfd
+  ip pim ssm range 239.0.0.0/8
+!
+! Router PIM sparse mode
+!
+router pim sparse-mode
+  ip pim bfd-instance
+  ip pim log-neighbor-changes
+  ip pim register-source
+  ip pim spt-threshold group-list TEST
+!
+! Router ISIS
+!
+router isis TEST
+  passive-interface Ethernet1
+!
+! More Globals
+!
+link state track TEST
+!
+lldp holdtime 10
+lldp reinit 10
+lldp timer reinitialization
+lldp tlv-select system-name
+!
+ntp source Managemen1
+!
+
+ptp sync interval 10
+!
+service sequence-numbers
+!
+snmp-server source-interface Management1
+!
+! Policy Map
+!
+policy-map type control-plane
+policy-map type qos
+!
+! Spanning tree
+!
+spanning-tree bridge assurance
+spanning-tree loopguard default
+spanning-tree portfast bpdufilter default
+spanning-tree portfast bpduguard default
+spanning-tree transmit hold-count 10
+spanning-tree vlan 100
+!
+! ACL
+!
+ip acl test
+  statistics per-entry
+!
+username test ssh-key dldkdkdkdkdkdkd
+!
+vlan internal allocation policy ascending
+!
+vrf definition GREEN
+!
+
