@@ -7,6 +7,10 @@ to CVPs REST API. The script itself uses the provided Python based API.
 All files needed to use the Python based API is provided in this repo.
 Make sure to clone all files to your directory.
 
+There is a TEST-CONFIGLET.TXT which can be pasted into a static configlet.
+The file have all old CLI configs that will be changed. The thought
+here is to have something to test on.
+
 The script will connect to CVP and open all static configlets. It will
 look for all CLI changes and update the configlets. This means a lot of
 tasks will be created and when running them basically just the running config 
