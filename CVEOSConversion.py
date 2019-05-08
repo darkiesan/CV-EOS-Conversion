@@ -57,7 +57,7 @@ def checkCli(myConfig):
 	newConfig = re.sub('ntp source', 'ntp local-interface', newConfig)
 	newConfig = re.sub('ptp sync interval', 'ptp sync-message interval', newConfig)
 	newConfig = re.sub('service sequence-numbers', 'logging format sequence-numbers', newConfig)
-	newConfig = re.sub('username sshkey', 'username ssh-key', newConfig)
+	newConfig = re.sub('sshkey', 'ssh-key', newConfig)
 	newConfig = re.sub('vlan internal allocation policy', 'vlan internal order', newConfig)
 	newConfig = re.sub('snmp-server source-interface', 'snmp-server local-interface', newConfig)
 	newConfig = re.sub('spanning-tree bridge assurance', 'spanning-tree transmit active', newConfig)
@@ -96,7 +96,7 @@ def checkCli(myConfig):
 
 	newConfig = re.sub('arp timeout', 'arp aging timeout', newConfig)
  	newConfig = re.sub('dot1x max-reauth-req', 'dot1x max-reauth-req', newConfig)
-	newConfig = re.sub('#ip ospf bfd', 'ip ospf neighbor bfd', newConfig)
+	newConfig = re.sub('ip ospf bfd', 'ip ospf neighbor bfd', newConfig)
 	newConfig = re.sub('ip ospf shutdown', 'ip ospf disabled', newConfig)
 	newConfig = re.sub('ip pim bfd-instance', 'pim bfd', newConfig)
 	newConfig = re.sub('ip pim bsr-border', 'pim bsr border', newConfig)
@@ -115,24 +115,24 @@ def checkCli(myConfig):
 	newConfig = re.sub('switchport port-security maximum', 'switchport port-security mac-address maximum', newConfig)
 	newConfig = re.sub('switchport vlan mapping', 'switchport vlan translation', newConfig)
 	newConfig = re.sub('vrf forwarding', 'vrf', newConfig)
-	newConfig = re.sub('vrrp authentication', 'vrrp peer authentication', newConfig)
-	newConfig = re.sub('vrrp delay reload', 'vrrp timers delay reload', newConfig)
-	newConfig = re.sub('vrrp description', 'vrrp session description', newConfig)
-	newConfig = re.sub('vrrp ip', 'vrrp ipv4', newConfig)
-	newConfig = re.sub('vrrp priority', 'vrrp priority-level', newConfig)
-	newConfig = re.sub('vrrp shutdown', 'vrrp disabled', newConfig)
-	newConfig = re.sub('vrrp timers advertise', 'vrrp advertisement interval', newConfig)
-	newConfig = re.sub('vrrp track', 'vrrp tracked-object', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) authentication', r'\1' + ' authentication', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) delay reload', r'\1' + ' timers delay reload', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) description', r'\1' + ' session description', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) ip', r'\1' + ' ipv4', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) priority', r'\1' + ' priority-level', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) shutdown', r'\1' + ' disabled', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) timers advertise', r'\1' + ' advertisement interval', newConfig)
+	newConfig = re.sub('(vrrp [1-9]+) track', r'\1' + ' tracked-object', newConfig)
 
 #
 # Class maps, policy maps , control plane, ACL
 #
 
 	newConfig = re.sub('class-map type control-plane', 'class-map type copp', newConfig)
- 	newConfig = re.sub('^control-plane', 'system control-plane', newConfig)
 	newConfig = re.sub('policy-map type control-plane', 'policy-map type copp', newConfig)
 	newConfig = re.sub('policy-map type qos', 'policy-map type quality-of-service', newConfig)
 	newConfig = re.sub('statistics per-entry', 'counters per-entry', newConfig)
+ 	newConfig = re.sub('control-plane', 'system control-plane', newConfig)
 
 #
 # Community list
@@ -145,11 +145,8 @@ def checkCli(myConfig):
 # IGMP
 #
 
-# igmp in interface mode
 #	newConfig = re.sub('ip igmp query-max-response-time', 'igmp query-max-response-time', newConfig)
-#ip igmp query-max-response-time - query-max-response-time (router igmp)
-#	newConfig = re.sub('ip igmp query-max-response-time', 'query-max-response-time', newConfig)
-
+#	newConfig = re.sub('[\ ]+ip igmp query-max-response-time', '   query-max-response-time', newConfig)
 	newConfig = re.sub('ip igmp snooping vlan immediate-leave', 'ip igmp snooping vlan fast-leave', newConfig)
 	newConfig = re.sub('ip igmp snooping vlan mrouter', 'ip igmp snooping vlan multicast-router', newConfig)
 	newConfig = re.sub('ip igmp snooping vlan static', 'ip igmp snooping vlan member', newConfig)
