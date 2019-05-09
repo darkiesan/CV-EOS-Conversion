@@ -46,7 +46,7 @@ Below is an explanation of all command line options to `CVEOSConversion.py`:
 
 Even though this script is best effort supported, please send any issues you find, suggestions for improvements etc to: [po@arista.com](mailto:po@arista.com).  Please use the subject: **CV EOS Conversion tool**
 
-I also want to give credit to Steve Ulrich and Thomas Smith for reviewing the code and regexes. They have been a great help debugging the tool!
+I also want to give credit to Steve Ulrich and Thomas Smith for reviewing and contributing to the code and regexes. They have been a great help debugging the tool!
 
 Thx
 Patrik Olsson
