@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #
 # Copyright (c) 2016, Arista Networks, Inc.
 # All rights reserved.
@@ -31,7 +31,11 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import cvp, optparse, string, re
+import argparse
+import re
+import string
+
+import cvp
 
 #
 # Needed support functions
@@ -200,14 +204,53 @@ def checkCli(myConfig):
 #
 
 usage = 'usage: %prog [options]'
-op = optparse.OptionParser(usage=usage)
-op.add_option( '-c', '--cvphostname', dest='cvphostname', action='store', help='CVP host name FQDN or IP', type='string')
-op.add_option( '-u', '--cvpusername', dest='cvpusername', action='store', help='CVP username', type='string')
-op.add_option( '-p', '--cvppassword', dest='cvppassword', action='store', help='CVP password', type='string')
-op.add_option( '-d', '--debug', dest='debug', action='store', help='If debug is yes, nothing will actually be sent to CVP and proposed configs are written to terminal', type='string', default='no')
-op.add_option( '-t', '--trace', dest='trace', action='store', help='If trace is yes, alongside actual changes to CVP configlets, there will be trace messages to terminal', type='string', default='no')
 
-opts, _ = op.parse_args()
+# Define command line options for argparse
+ap = argparse.ArgumentParser()
+ap.add_argument(
+    "-c",
+    "--cvphostname",
+    dest="cvphostname",
+    action="store",
+    required=True,
+    help="CVP host name FQDN or IP",
+)
+
+ap.add_argument(
+    "-u",
+    "--cvpusername",
+    dest="cvpusername",
+    action="store",
+    required=True,
+    help="CVP username",
+)
+
+ap.add_argument(
+    "-p",
+    "--cvppassword",
+    dest="cvppassword",
+    action="store",
+    required=True,
+    help="CVP password",
+)
+
+ap.add_argument(
+    "-d",
+    "--debug",
+    dest="debug",
+    action="store_true",
+    help="If debug is set, nothing will actually be sent to CVP and proposed configs are written to terminal",
+    default=False,
+)
+ap.add_argument(
+    "-t",
+    "--trace",
+    dest="trace",
+    action="store_true",
+    help="If trace is set, alongside actual changes to CVP configlets, there will be trace messages to terminal",
+    default=False,
+)
+opts = ap.parse_args()
 
 #
 # Assign command line options to variables and assign static variables.
@@ -238,7 +281,7 @@ myConfiglets = server.getConfiglets()
 
 for configlet in myConfiglets:
 	if configlet.configletType == 'Static':
-		if trace == "yes":
+		if trace:
 			print "\nWorking on configlet: %s" % ( configlet.name )
 
 		newConfig = checkCli(configlet.config)
@@ -247,7 +290,7 @@ for configlet in myConfiglets:
 # If debug is yes, print all proposed configuration to terminal
 #
 
-		if debug == "yes":
+		if debug:
 			print "\n\n=================================================================="
 			print "Configlet: %s" % ( configlet.name )
 			print "=================================================================="
@@ -257,8 +300,8 @@ for configlet in myConfiglets:
 # If debug is no, update all configlets with CLI changes
 #
 
-		if debug == "no":
-			if trace == "yes":
+		if not debug:
+			if trace:
 				print "Updating configlet: %s" % ( configlet.name)
 
 			configlet.config = newConfig
