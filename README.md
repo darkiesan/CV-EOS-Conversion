@@ -1,6 +1,10 @@
 
 # CV EOS Conversion tool
 
+Even though this script is best effort supported, please send any issues you find, suggestions for improvements etc to: [po@arista.com](mailto:po@arista.com).  Please use the subject: **CV EOS Conversion tool**
+
+I also want to give credit to Steve Ulrich and Thomas Smith for reviewing and contributing to the code and regexes. They have been a great help debugging the tool!
+
 This tool is meant to be used from a Linux script host and connect to CVPs REST API. The script itself uses the provided Python based API.  All files needed to use the Python based API is provided in this repo.  Make sure to clone all files to your directory.
 
 There is a `TEST-CONFIGLET.TXT` which can be pasted into a static configlet.  The file have all old CLI configs that will be changed. The thought here is to have something to test on.
@@ -44,12 +48,5 @@ Below is an explanation of all command line options to `CVEOSConversion.py`:
                     trace messages to terminal.  
 ```
 
-Even though this script is best effort supported, please send any issues you find, suggestions for improvements etc to: [po@arista.com](mailto:po@arista.com).  Please use the subject: **CV EOS Conversion tool**
-
-I also want to give credit to Steve Ulrich and Thomas Smith for reviewing and contributing to the code and regexes. They have been a great help debugging the tool!
-
-Thx
-Patrik Olsson
-Systems Engineer
-Arista Networks
+Thx, Patrik Olsson, Systems Engineer Arista Networks
 
