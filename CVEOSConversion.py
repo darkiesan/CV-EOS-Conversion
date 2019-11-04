@@ -201,8 +201,6 @@ def checkCli(myConfig):
 	reconvert = ''
 	for line in newConfig.splitlines():
 		if 'bgp listen range' in line:
-			print('===========================================================\n\n\n\n================LINE================\n\n\n\n===========================================================')
-			print(line)
 			line = line.replace('peer group', 'peer-group')
 			reconvert += line+'\n'
 		else:
