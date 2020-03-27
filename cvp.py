@@ -8,6 +8,7 @@ Cvp.py is a library which can be used to perform various
 actions over the cvp instance. There are numerous methods each
 corresponding to each action. Methods are listed below in the Cvp class.
 '''
+from __future__ import print_function
 import os
 import time
 import cvpServices
@@ -2569,7 +2570,7 @@ class Cvp( Jsonable ):
             self.cvpService.deleteChangeControls( [ ccmId ] )
          except cvpServices.CvpError as err:
             if err.errorCode == errorCodes.CCM_INVALID_DELETE:
-               print err.errorMessage
+               print(err.errorMessag)
             else:
                raise
 

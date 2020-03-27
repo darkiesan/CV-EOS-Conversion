@@ -12,6 +12,7 @@ It contains 2 classes
    CvpError -- Handles exceptions
    CvpService -- Handles requests
 '''
+from __future__ import print_function
 try:
    import requests_2_6_0 as requests
 except ImportError:
@@ -211,13 +212,13 @@ class CvpService( object ):
          kwargs[ 'cookies' ] = self.cookies
       kwargs[ 'verify' ] = False
       if trace:
-         print url
+         print(url)
       response = method( url, *args, **kwargs )
       response.raise_for_status()
       responseJson = response.json()
       if 'errorCode' in responseJson:
          if trace:
-            print responseJson
+            print(responseJson)
          errorCode = responseJson.get( 'errorCode', 0 )
          errorMessage = responseJson.get( 'errorMessage', '' )
          raise CvpError( errorCode, errorMessage, response=responseJson )
