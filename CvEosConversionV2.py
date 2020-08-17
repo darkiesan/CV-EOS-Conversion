@@ -33,17 +33,8 @@
 from __future__ import print_function
 from datetime import datetime
 from jsonrpclib import Server
-import argparse
-import cvp
-import cvpServices
-import getpass
-import hashlib
-import re
-import socket
-import string
-import ssl
-import sys
-import urllib3
+import argparse, cvp, cvpServices, getpass, hashlib, re, socket, string, ssl, sys, urllib3
+
 
 #
 # Define command line options for optparse
