@@ -40,7 +40,6 @@ import argparse, cvp, cvpServices, getpass, os, re, socket, sys, urllib3
 
 
 #
-
 # Define command line options for optparse
 #
 usage = 'usage: %prog [options]'
@@ -208,7 +207,6 @@ def main():
 
 
     for device in deployedDevices:
-        timestamp = datetime.now().replace(microsecond=0)
         sys.stderr.write('===========================================================\n')
         sys.stderr.write('Processing device {}.\n'.format(device.fqdn))
         sys.stderr.write('===========================================================\n')
