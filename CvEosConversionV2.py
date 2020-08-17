@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-#
-# Copyright (c) 2020, Arista Networks, Inc.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
 #
 #   Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -30,11 +22,9 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-from __future__ import print_function
 from datetime import datetime
 from jsonrpclib import Server
 import argparse, cvp, cvpServices, getpass, hashlib, re, socket, string, ssl, sys, urllib3
-
 
 #
 # Define command line options for optparse
@@ -143,27 +133,37 @@ class cvpApis(object):
     def getDevices(self, provisioned=True):
         return self.server.getDevices(provisioned)
 
+    def getInventory(self, populateParentContainerKeyMap=True, provisioned=True):
+        return self.service.getInventory(populateParentContainerKeyMap, provisioned)
+
     def updateConfiglet(self, configlet, waitForTaskIds=False):
       return self.server.updateConfiglet(configlet, waitForTaskIds)
 
 
 def eapi(ipAddress, cmds):
     try:
-      url = 'https://{}:{}@{}/command-api'.format(user, password, ipAddress)
-      ssl._create_default_https_context = ssl._create_unverified_context
-      switch = Server(url) 
-      response = switch.runCmds( 1, ['{}'.format(cmds)] )
+        url = 'https://{}:{}@{}/command-api'.format(user, password, ipAddress)
+        ssl._create_default_https_context = ssl._create_unverified_context
+        switch = Server(url)
+        response = switch.runCmds( 1, cmds )
 
     except socket.timeout:
-      return None
+        if trace:
+            sys.stderr.write('Error in eAPI call to {}.\n'.format(ipAddress))
 
-    except err as e:
-      timestamp = datetime.now().replace(microsecond=0)
-      sys.stderr.write('{} {}ERROR{}: {}.\n'.format(timestamp, bcolors.ERROR, bcolors.NORMAL, e))
-      return None
- 
+        return None
+
+    except:
+        if trace:
+            sys.stderr.write('Error in eAPI call to {}.\n'.format(ipAddress))
+
+        return None
+
     else:
-      return response 
+        if trace:
+            sys.stderr.write('eAPI call to {} successful.\n'.format(ipAddress))
+
+        return response
 
 
 
@@ -279,8 +279,8 @@ def checkCli(myConfig):
     # IGMP
     #
 
-    #	newConfig = re.sub('ip igmp query-max-response-time', 'igmp query-max-response-time', newConfig)
-    #	newConfig = re.sub('[\ ]+ip igmp query-max-response-time', '   query-max-response-time', newConfig)
+    #   newConfig = re.sub('ip igmp query-max-response-time', 'igmp query-max-response-time', newConfig)
+    #   newConfig = re.sub('[\ ]+ip igmp query-max-response-time', '   query-max-response-time', newConfig)
     newConfig = re.sub('ip igmp snooping vlan immediate-leave', 'ip igmp snooping vlan fast-leave', newConfig)
     newConfig = re.sub('ip igmp snooping vlan mrouter', 'ip igmp snooping vlan multicast-router', newConfig)
     newConfig = re.sub('ip igmp snooping vlan static', 'ip igmp snooping vlan member', newConfig)
@@ -329,61 +329,179 @@ def checkCli(myConfig):
 
 
     # ccnPeon bgp listen range reconverter from 'peer group' back to 'peer-group' which is invalid syntax.
-
     # Checks every line in newConfig for 'bgp listen range'. If this exists, just replace 'peer group' with 'peer-group'
-
     reconvert = ''
     for line in newConfig.splitlines():
         if 'bgp listen range' in line:
-            print('===========================================================\n\n\n\n================LINE================\n\n\n\n===========================================================')
-            print(line)
+            #sys.stderr.write('===========================================================\n\n\n\n')
+            #sys.stderr.write('================LINE================\n\n\n\n')
+            #sys.stderr.write('===========================================================\n')
+            #sys.stderr.write('{}'.format(line))
             line = line.replace('peer group', 'peer-group')
-            reconvert += line+'\n'
+            reconvert += '{}\n'.format(line)
         else:
-            reconvert += line+'\n'
+            reconvert += '{}\n'.format(line)
 
+	
     newConfig = reconvert
 
     return newConfig
 
 def main():
     if trace:
-        print('Assembling inventory of devices running EOS 4.21 or greater.\n\n\n')
+        timestamp = datetime.now().replace(microsecond=0)
+        sys.stderr.write('{} {}INFO:{} Assembling inventory of devices running EOS 4.21 or greater.\n\n\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL))
 
 
-    upgradedDevices = [device for device in cvpApis().getDevices() if (device.containerName != 'Undefined' and eapi(device.ipAddress, 'show version') is not None and int(eapi(device.ipAddress, 'show version')[0]['version'].split('.')[1]) >= 21)]
+    upgradedDevices = [device for device in cvpApis().getDevices() if (device.containerName != 'Undefined' and eapi(device.ipAddress, ['show version']) is not None and int(eapi(device.ipAddress, ['show version'])[0]['version'].split('.')[1]) >= 21)]
+
+
+    sys.stderr.write('\n\n\n')
+    pendingTasks = []
 
 
     for device in upgradedDevices:
+        if trace:
+            sys.stderr.write('===========================================================\n')
+            sys.stderr.write('Processing device {}.\n'.format(device.fqdn))
+            sys.stderr.write('===========================================================\n')
+
         staticConfiglets = [configlet for configlet in device.configlets if cvpApis().getConfiglet(configlet) is not None and cvpApis().getConfiglet(configlet).configletType == 'Static']
 
         for staticConfiglet in staticConfiglets:
             configlet = cvpApis().getConfiglet(staticConfiglet)
 
             if trace:
-                print('Working on configlet: {}\n'.format(configlet.name))
+                timestamp = datetime.now().replace(microsecond=0)
+                sys.stderr.write('{} {}INFO{}: Working on configlet: {}\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, configlet.name))
 
-  	    newConfig = checkCli(configlet.config)
+            newConfig = checkCli(configlet.config)
 
- 	    if debug:
-	        print('==================================================================')
-                print('Configlet: {}'.format(configlet.name))
-                print('==================================================================')
+            if debug:
+                sys.stderr.write('===========================================================\n')
+                sys.stderr.write('Configlet: {}\n'.format(configlet.name))
+                sys.stderr.write('===========================================================\n')
 
                 if hashlib.md5(configlet.config.replace('\t','').replace('\r','').replace('\n','')).hexdigest() == hashlib.md5(newConfig.replace('\t','').replace('\r','').replace('\n','')).hexdigest():
-                    print('No changes!\n')
+                    sys.stderr.write('No changes\n')
 
                 else:
-                    print('{}\n'.format(newConfig))
+                    sys.stderr.write('{}\n'.format(newConfig))
 
             else:
                 if hashlib.md5(configlet.config.replace('\t','').replace('\r','').replace('\n','')).hexdigest() != hashlib.md5(newConfig.replace('\t','').replace('\r','').replace('\n','')).hexdigest():
                     if trace:
-                        print('Updating configlet: {}\n'.format(configlet.name))
+                        timestamp = datetime.now().replace(microsecond=0)
+                        sys.stderr.write('{} {}INFO{}: Updating configlet: {}\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, configlet.name))
 
                     configlet.config = newConfig
-                    cvpApis().updateConfiglet(configlet)
 
-            print('\n\n\n\n\n')
+                    try:
+                        tasks = cvpApis().updateConfiglet(configlet)
+
+                    except cvpServices.CvpError as error:
+                        timestamp = datetime.now().replace(microsecond=0)
+                        sys.stderr.write('{} {}WARNING{}: {}.\n'.format(timestamp, bcolors.WARNING, bcolors.NORMAL, error))
+
+                    else:
+                        for task in tasks:
+                            pendingTasks.append(int(task))
+
+
+            sys.stderr.write('\n\n\n\n\n')
+
+
+
+        sys.stderr.write('\n\n\n\n\n')
+
+
+
+    if not debug and len(pendingTasks) > 0:
+        timestamp = datetime.now().replace(microsecond=0)
+        startTime = time()
+        sys.stderr.write('{} {}INFO{}: Creating CvEosConversionV2.py {} Change Control.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, timestamp))
+
+
+        request = {}
+        request['config'] = {}
+        request['config']['id'] = str(uuid4())
+        request['config']['name'] = 'CvEosConversionV2.py {}'.format(timestamp)
+        request['config']['root_stage'] = {}
+        request['config']['root_stage']['id'] = 'Root Stage'
+        request['config']['root_stage']['stage_row'] = []
+
+
+        stages = []
+        i = 1
+        for taskId in pendingTasks:
+            stage = {}
+            stage['id'] = str(uuid4())
+            stage['name'] = 'stage1-{}'.format(i)
+            stage['action'] = {}
+            stage['action']['name'] = 'task'
+            stage['action']['args'] = {}
+            stage['action']['args']['TaskID'] = str(taskId)
+
+            stages.append(stage)
+
+            i += 1
+
+
+        request['config']['root_stage']['stage_row'].append({'stage': stages})
+        result = cvpApis().updateChangeControl(request)
+
+
+        timestamp = datetime.now().replace(microsecond=0)
+        sys.stderr.write('{} {}INFO{}: Auto approved {} Change Control.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, request['config']['name']))
+        cvpApis().addChangeControlApproval({'cc_id': result['id'], 'cc_timestamp': result['update_timestamp']})
+
+
+        timestamp = datetime.now().replace(microsecond=0)
+        sys.stderr.write('{} {}INFO{}: Executing {} Change Control.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, request['config']['name']))
+        cvpApis().startChangeControl({'cc_id': result['id']})
+
+
+        if trace:
+            timestamp = datetime.now().replace(microsecond=0)
+            sys.stderr.write('{} {}INFO{}: Checking status of {} Change Control.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, request['config']['name']))
+
+
+        ccRunning = True
+        ccFailed = False
+        while ccRunning:
+            timestamp = datetime.now().replace(microsecond=0)
+            status = cvpApis().getChangeControlStatus({'cc_id': result['id']})
+
+
+            if status['status']['state'] == 'Completed':
+                ccRunning = False
+                timestamp = datetime.now().replace(microsecond=0)
+                sys.stderr.write('{} {}INFO{}: {} Change Control complete.  Exiting.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, request['config']['name']))
+
+
+            elif status['status']['state'] == 'Failed':
+                ccRunning = False
+                ccFailed = True
+                timestamp = datetime.now().replace(microsecond=0)
+                sys.stderr.write('{} {}ERROR{}:  {} Change Control unsuccessful.  Initiate Network Rollback.\n'.format(timestamp, bcolors.ERROR, bcolors.NORMAL, request['config']['name']))
+
+
+            else:
+                timestamp = datetime.now().replace(microsecond=0)
+                sys.stderr.write('{} {}INFO{}: {} Change Control outstanding.  Sleeping 30 seconds...\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, request['config']['name']))
+                sleep (30)
+
+
+    elif not debug and len(pendingTasks) > 0:
+        timestamp = datetime.now().replace(microsecond=0)
+        sys.stderr.write('{} {}INFO{}: Created tasks {}.  Please execute from CVP GUI..\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, pendingTasks))
+        return
+
+
+    else:
+        timestamp = datetime.now().replace(microsecond=0)
+        sys.stderr.write('{} {}INFO{}: No changes made. Exiting.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL))
+
+
 
 main()
