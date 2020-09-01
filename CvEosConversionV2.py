@@ -22,6 +22,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+from cvprac.cvp_client import CvpClient
 from datetime import datetime
 from jsonrpclib import Server
 import argparse, cvp, cvpServices, getpass, hashlib, re, socket, string, ssl, sys, urllib3
@@ -146,29 +147,24 @@ class cvpApis(object):
       return self.server.updateConfiglet(configlet, waitForTaskIds)
 
 
-def eapi(ipAddress, cmds):
+def getVersion(mac):
     try:
-        url = 'https://{}:{}@{}/command-api'.format(user, password, ipAddress)
-        switch = Server(url)
-        response = switch.runCmds( 1, cmds )
-
-    except socket.timeout:
-        if trace:
-            sys.stderr.write('Error in eAPI call to {}.\n'.format(ipAddress))
-
-        return None
+        clnt = CvpClient()
+        clnt.connect(['{}'.format(host)], user, password)
+        serialNumber = clnt.api.get_device_by_mac(mac)['serialNumber']
+        version = clnt.get('/api/v1/rest/{}/Eos/image'.format(serialNumber))['notifications'][0]['updates']['version']['value']
 
     except:
         if trace:
-            sys.stderr.write('Error in eAPI call to {}.\n'.format(ipAddress))
+            sys.stderr.write('cvprac api call to {} unsuccessful.\n'.format(mac))
 
         return None
 
     else:
         if trace:
-            sys.stderr.write('eAPI call to {} successful.\n'.format(ipAddress))
+            sys.stderr.write('cvprac api call to {} successful.\n'.format(mac))
 
-        return response
+        return version
 
 
 
@@ -358,7 +354,7 @@ def main():
         sys.stderr.write('{} {}INFO:{} Assembling inventory of devices running EOS 4.21 or greater.\n\n\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL))
 
 
-    upgradedDevices = [device for device in cvpApis().getDevices() if (device.containerName != 'Undefined' and eapi(device.ipAddress, ['show version']) is not None and int(eapi(device.ipAddress, ['show version'])[0]['version'].split('.')[1]) >= 21)]
+    upgradedDevices = [device for device in cvpApis().getDevices() if (device.containerName != 'Undefined' and getVersion(device.macAddress).split('.')[1] >= 21)]
 
 
     sys.stderr.write('\n\n\n')
