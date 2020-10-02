@@ -179,6 +179,7 @@ def checkCli(myConfig):
     #
 
     newConfig = re.sub('aaa authorization console','aaa authorization serial-console', newConfig)
+    newConfig = re.sub('enable secret','enable password', newConfig)
     newConfig = re.sub('errdisable detect cause link-flap - errdisable detect cause link-change', 'errdisable detect cause link-change', newConfig)
     newConfig = re.sub('ip dhcp smart-relay$', 'ip dhcp relay all-subnets', newConfig)
     newConfig = re.sub('ip dhcp smart-relay global', 'ip dhcp relay all-subnets default', newConfig)
