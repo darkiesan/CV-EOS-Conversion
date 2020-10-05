@@ -69,7 +69,7 @@ def checkCli(myConfig):
     newConfig = re.sub('spanning-tree portfast bpdufilter default', 'spanning-tree edge-port bpdufilter default', newConfig)
     newConfig = re.sub('spanning-tree portfast bpduguard default', 'spanning-tree edge-port bpduguard default', newConfig)
     newConfig = re.sub('spanning-tree transmit hold-count', 'spanning-tree bpdu tx hold-count', newConfig)
-    newConfig = re.sub('spanning-tree vlan', 'spanning-tree vlan-id', newConfig)
+    newConfig = re.sub('spanning-tree vlan ', 'spanning-tree vlan-id ', newConfig)
     newConfig = re.sub('vrf definition', 'vrf instance', newConfig)
 
 #
