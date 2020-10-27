@@ -1,0 +1,32 @@
+{
+    "python.terminal.activateEnvironment": false,
+    "cSpell.words": [
+        "IGMP",
+        "MSDP",
+        "aging",
+        "bcolors",
+        "bpdu",
+        "bpdufilter",
+        "bpduguard",
+        "ccid",
+        "clnt",
+        "copp",
+        "cvpclnt",
+        "cvphostname",
+        "cvppassword",
+        "cvpusername",
+        "lacp",
+        "mrouter",
+        "nssa",
+        "neighbor",
+        "ospf",
+        "ospfv",
+        "pvlan",
+        "reauth",
+        "reconverter",
+        "reinit",
+        "reinitialization",
+        "vrrp"
+    ],
+    "cSpell.language": "en-GB"
+}
