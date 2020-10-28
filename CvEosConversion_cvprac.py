@@ -184,6 +184,7 @@ def checkCli(myConfig):
     newConfig = re.sub('spanning-tree portfast bpduguard default', 'spanning-tree edge-port bpduguard default', newConfig)
     newConfig = re.sub('spanning-tree transmit hold-count', 'spanning-tree bpdu tx hold-count', newConfig)
     newConfig = re.sub('spanning-tree vlan ', 'spanning-tree vlan-id ', newConfig)
+    newConfig = re.sub('no spanning-tree vlan ', 'no spanning-tree vlan-id ', newConfig)
     newConfig = re.sub('vrf definition', 'vrf instance', newConfig)
 
     #
@@ -193,6 +194,7 @@ def checkCli(myConfig):
     newConfig = re.sub('peer-group', 'peer group', newConfig)
     newConfig = re.sub('bgp listen limit', 'dynamic peer max', newConfig)
     newConfig = re.sub('fall-over bfd', 'bfd', newConfig)
+    newConfig = re.sub('soft-reconfiguration inbound', 'rib-in pre-policy retain', newConfig)
     newConfig = re.sub('soft-reconfiguration', 'rib-in pre-policy retain', newConfig)
     newConfig = re.sub('transport connection-mode', 'passive', newConfig)
 
@@ -419,7 +421,7 @@ def main():
                                 sys.stderr.write('{} {}WARNING{}: {}.\n'.format(timestamp, bcolors.WARNING, bcolors.NORMAL, error))
                             else:
                                 for task in tasks:
-                                    pendingTasks.append(task['ccId'])
+                                    pendingTasks.append(task['workOrderId'])
 
                     sys.stderr.write('\n')
         sys.stderr.write('\n')
@@ -432,6 +434,7 @@ def main():
     if not debug and len(pendingTasks) > 0:
         timestamp = datetime.now().replace(microsecond=0)
         sys.stderr.write('{} {}INFO{}: Creating CvEosConversion_cvprac.py {} Change Control.\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, timestamp))
+        sys.stderr.write('{} {}INFO{}: Tasks included in the Change Control: {}\n'.format(timestamp, bcolors.BOLD, bcolors.NORMAL, pendingTasks))
 
         # Create Change control from pending tasks
         ccid = str(uuid4())
