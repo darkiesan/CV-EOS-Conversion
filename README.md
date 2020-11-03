@@ -3,7 +3,16 @@
 
 Even though this script is best effort supported, please send any issues you find, suggestions for improvements etc to: [po@arista.com](mailto:po@arista.com).  Please use the subject: **CV EOS Conversion tool**
 
-I also want to give credit to Steve Ulrich, Thomas Smith and Jonathan Smith for reviewing and contributing to the code and regexes. They have been a great help debugging the tool!
+I also want to give credit to Hugh Adams, Steve Ulrich, Thomas Smith and Jonathan Smith for reviewing and contributing to the code and regexes. They have been participating in developing and debugging the tool! Team work!
+
+Important files:
+ CVEOSConversion.py - The original tool to which the command line options are described further down.
+ CVEOSConversionV2.py - A conversion of the script to use CVPRAC and less command line options. If so desired it can be used instead of CVEOSConversion.py
+ CvEosConversion_cvprac.py - A worked through version of the tool that uses CVPRAC. Uses If so desired it can be used instead of CVEOSConversion.py
+
+Supporting files:
+ convertGenerated2Static.py - A script that will convert generated configlets to static configlets, since CVEOSConversion only work on static configlets. If so 
+ desired, convertGenerated2Static.py should be used before running the CVEOSConversion.
 
 This tool is meant to be used from a Linux Python script host (Python 2.6, 2.7 and 3.x) and connect to CVPs REST API. Current tested CVP version is 2019.1.x. There is work put into making the tool CVP 2020.1.x compatible. The script itself uses the provided CloudVisiob Python based API.  All files needed to use the Python based API is provided in this repo.  Make sure to clone all files to your directory.
 
