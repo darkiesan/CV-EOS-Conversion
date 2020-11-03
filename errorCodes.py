@@ -50,6 +50,7 @@ IMAGE_ALREADY_EXISTS = 162876
 UNSUPPORTED_IMAGE_VERSION = 161815
 USER_ALREADY_EXISTS = 202518
 INVALID_TASK_ID = 142951
+INVALID_TASK_NUMBERS = 142952
 AAASERVER_ALREADY_EXISTS = 212521
 CCM_INVALID_DELETE = 2721019
 CCM_EXECUTION_ERROR = 7
@@ -125,6 +126,7 @@ ERROR_MAPPING = { NO_ERROR_CODE : "No error code provided",
                   DATA_ALREADY_EXISTS : "Data already exists in Database",
                   INVALID_NETELEMENT_ID : "Invalid NetElement Id.",
                   INVALID_TASK_ID : "Invalid Task Id",
+                  INVALID_TASK_NUMBERS: "More than one task exists",
                   ENTITY_DOES_NOT_EXIST: "Entity does not exist",
                   NETELEMENT_ENTITY_DOES_NOT_EXIST: "Entity does not exist",
                   IMAGE_ALREADY_EXISTS : "Image already exists",
