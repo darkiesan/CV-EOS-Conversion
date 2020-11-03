@@ -26,7 +26,7 @@ Known caveats right now:
 
 * `system control-plane` can be translated by mistake to `system system control-plane`
 
-* The tool is meant to be used on static configlets. Any generated configlets by configlet builders should be updated through editing the configlet builder to use new CLI syntax.
+* The tool is meant to be used on static configlets. Any generated configlets by configlet builders should be updated through editing the configlet builder to use new CLI syntax. Also convertGenerated2Static.py can be used to convert all generated configlets to static configlets. A headsup there is that then altering the script in the configlet builder will not update those configlets converted to static configlets.
 
 * In interface config mode:
 	`ip igmp query-max-response-time` is meant to change to `igmp query-max-response-time` Right now it is not changed, because it overlaps with a command in `router igmp`.
