@@ -79,6 +79,7 @@ def checkCli(myConfig):
     newConfig = re.sub('peer-group', 'peer group', newConfig)
     newConfig = re.sub('bgp listen limit', 'dynamic peer max', newConfig)
     newConfig = re.sub('fall-over bfd', 'bfd', newConfig)
+    newConfig = re.sub('inbound all', 'all', newConfig)
     newConfig = re.sub('soft-reconfiguration', 'rib-in pre-policy retain', newConfig)
     newConfig = re.sub('transport connection-mode', 'passive', newConfig)
 
