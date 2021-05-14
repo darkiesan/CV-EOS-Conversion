@@ -141,7 +141,9 @@ def checkCli(myConfig):
 #
 # Community list
 #
+
     newConfig = re.sub('ip community-list expanded', 'ip community-list regexp', newConfig)
+    newConfig = re.sub('ip community-list standard', 'ip community-list', newConfig)
     newConfig = re.sub('ip extcommunity-list expanded', 'ip extcommunity-list regexp', newConfig)
     newConfig = re.sub('ip extcommunity-list standard', 'ip extcommunity-list', newConfig)
 
